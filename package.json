@@ -15,9 +15,11 @@
     "npm",
     "rect"
   ],
+  "homepage": "https://anthood.com",
+  "description": "React Component ready to be published on npm",
   "license": "MIT",
   "private": false,
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -43,7 +45,6 @@
     "@typescript-eslint/eslint-plugin": "^6.16.0",
     "@typescript-eslint/parser": "^6.16.0",
     "@vitejs/plugin-react": "^4.2.1",
-    "change-case": "^5.3.0",
     "eslint": "^8.56.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-typescript": "^17.1.0",
@@ -61,6 +62,7 @@
     "vite": "^5.0.10"
   },
   "dependencies": {
-    "inquirer": "^9.2.12"
+    "inquirer": "^9.2.12",
+    "change-case": "^5.3.0"
   }
 }
