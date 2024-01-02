@@ -2,8 +2,8 @@
 import fs from 'fs/promises';
 import path from 'path';
 import inquirer from 'inquirer';
-
 import { exec } from 'child_process';
+import { pascalCase, kebabCase } from 'change-case';
 import { getComponentTemplate, getMainTemplate } from './templates.mjs';
 
 const inputName = process.argv[2];
@@ -13,13 +13,11 @@ if (!inputName) {
   process.exit(1);
 }
 
-const pascalCaseName = inputName
-  .split(/[-\s]/)
-  .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-  .join('');
+const pascalCaseName = pascalCase(inputName);
+const kebabCaseName = kebabCase(inputName);
 
 const gitRepoUrl = 'https://github.com/johnroma/react-component-standalone';
-const cloneFolderPath = path.resolve(pascalCaseName);
+const cloneFolderPath = path.resolve(kebabCaseName);
 
 async function cloneRepo() {
   return new Promise((resolve, reject) => {
@@ -35,35 +33,52 @@ async function cloneRepo() {
 }
 
 async function promptAndUpdatePackageJson() {
+  try {
     const packageJsonPath = path.join(cloneFolderPath, 'package.json');
     const packageJsonData = await fs.readFile(packageJsonPath, 'utf8');
     let packageJson = JSON.parse(packageJsonData);
-  
+
     const answers = await inquirer.prompt([
-      { name: 'name', message: 'Package name:', default: packageJson.name },
-      { name: 'repository', message: 'Repository URL:', default: packageJson.repository.url },
+      { name: 'name', message: 'Package name:', default: kebabCaseName },
+      { name: 'repository', message: 'Repository URL (optional):', default: null },
       { name: 'authorName', message: 'Author name:', default: packageJson.author.name },
       { name: 'authorEmail', message: 'Author email:', default: packageJson.author.email },
       { name: 'keywords', message: 'Keywords (comma-separated):', default: packageJson.keywords.join(', ') }
     ]);
-  
+
     packageJson = {
       ...packageJson,
       name: answers.name,
       version: '0.0.1',
-      repository: { ...packageJson.repository, url: answers.repository },
       author: { name: answers.authorName, email: answers.authorEmail },
       keywords: answers.keywords.split(',').map(k => k.trim())
     };
-  
+
+    if (answers.repository) {
+      packageJson.repository = { url: answers.repository };
+    } else {
+      delete packageJson.repository;
+    }
+
+    delete packageJson.bin;
+
     await fs.writeFile(packageJsonPath, JSON.stringify(packageJson, null, 2));
     console.log('Updated package.json with new information.');
+
+    const binPath = path.join(cloneFolderPath, 'bin');
+    const githubPath = path.join(cloneFolderPath, '.github');
+
+    await fs.rm(binPath, { recursive: true, force: true });
+    await fs.rm(githubPath, { recursive: true, force: true });
+    console.log('Cleanup unnecessary files.');
+  } catch (err) {
+    console.error('An error occurred during the cleanup process.');
+    console.error(err.message);
   }
-  
+}
 
 async function createComponentFiles() {
   try {
-    // Change working directory to the cloned folder
     process.chdir(cloneFolderPath);
 
     const componentsFolderPath = path.resolve('./src/components');
@@ -75,22 +90,23 @@ async function createComponentFiles() {
     const indexContent = `export { ${pascalCaseName} } from './${pascalCaseName}'`;
     const mainContent = getMainTemplate(pascalCaseName);
 
-    // Ensure the components folder exists
     await fs.mkdir(componentsFolderPath, { recursive: true });
 
-    // Write the component, index, and main.tsx files
     await fs.writeFile(componentFilePath, componentContent);
     await fs.writeFile(indexFilePath, indexContent);
     await fs.writeFile(mainFilePath, mainContent);
-    
-    console.log(`Component ${pascalCaseName}.tsx, index.ts, and main.tsx created`);
+
+    console.log(`Component ${pascalCaseName}.tsx ready for coding.`);
+    console.log(`React-environment installed, run 'pnpm install to initialise` );
   } catch (err) {
-    console.error(`Error creating files: ${err}`);
+    console.error('Error creating files:', err.message);
   }
 }
 
-// First clone the repo, then create component files
 cloneRepo()
   .then(promptAndUpdatePackageJson)
   .then(createComponentFiles)
-  .catch(err => console.error(err));
+  .catch(err => {
+    console.error('Something went wrong, please try again.');
+    console.error(err.message);
+  });
