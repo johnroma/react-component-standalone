@@ -1,5 +1,5 @@
 {
-  "name": "@anthood/react-component-standalone",
+  "name": "@anthood/crc",
   "repository": {
     "url": "https://github.com/johnroma/react-component-standalone"
   },
@@ -17,12 +17,12 @@
   ],
   "license": "MIT",
   "private": false,
-  "version": "0.0.3",
+  "version": "0.0.5",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "bin": {
-    "react-component-standalone": "./bin/index.mjs"
+    "crc": "./bin/index.mjs"
   },
   "scripts": {
     "dev": "vite",
@@ -53,6 +53,8 @@
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "prettier": "^3.1.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "tsup": "^8.0.1",
     "typescript": "^5.3.3",
     "vite": "^5.0.10"
