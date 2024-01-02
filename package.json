@@ -17,10 +17,13 @@
   ],
   "license": "MIT",
   "private": false,
-  "version": "0.0.1",
+  "version": "0.0.3",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "bin": {
+    "react-component-standalone": "./bin/index.mjs"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsup src/components/index.ts --format cjs,esm --minify --dts --clean",
