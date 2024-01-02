@@ -50,6 +50,7 @@ async function promptAndUpdatePackageJson() {
     packageJson = {
       ...packageJson,
       name: answers.name,
+      version: '0.0.1',
       repository: { ...packageJson.repository, url: answers.repository },
       author: { name: answers.authorName, email: answers.authorEmail },
       keywords: answers.keywords.split(',').map(k => k.trim())
@@ -58,6 +59,7 @@ async function promptAndUpdatePackageJson() {
     await fs.writeFile(packageJsonPath, JSON.stringify(packageJson, null, 2));
     console.log('Updated package.json with new information.');
   }
+  
 
 async function createComponentFiles() {
   try {
