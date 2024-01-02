@@ -67,9 +67,11 @@ async function promptAndUpdatePackageJson() {
 
     const binPath = path.join(cloneFolderPath, 'bin');
     const githubPath = path.join(cloneFolderPath, '.github');
+    const gitPath = path.join(cloneFolderPath, '.git');
 
     await fs.rm(binPath, { recursive: true, force: true });
     await fs.rm(githubPath, { recursive: true, force: true });
+    await fs.rm(gitPath, { recursive: true, force: true });
     console.log('Cleanup unnecessary files.');
   } catch (err) {
     console.error('An error occurred during the cleanup process.');
@@ -97,7 +99,7 @@ async function createComponentFiles() {
     await fs.writeFile(mainFilePath, mainContent);
 
     console.log(`Component ${pascalCaseName}.tsx ready for coding.`);
-    console.log(`React-environment installed, run 'pnpm install to initialise` );
+    console.log(`React-environment installed, run 'pnpm install' to initialize.`);
   } catch (err) {
     console.error('Error creating files:', err.message);
   }
