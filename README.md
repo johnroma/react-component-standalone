@@ -1,4 +1,4 @@
-# Standalone Component maker
+# Create Standalone React Component
 
 Helper to generate a publishable react component
 
